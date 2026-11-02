@@ -1,3 +1,5 @@
+//Joshua Dalton
+//IT505
 
 interface Assignment {
     name: string;
