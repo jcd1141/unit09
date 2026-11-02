@@ -1,15 +1,17 @@
 //Joshua Dalton
 //IT505
 
-interface Assignment {
+interface Assignment { //interface for assignment info
     name: string;
     course: string;
     dueDate: string;
     completed: boolean;
 }
 
+//array to hold assignments
 let assignments: Assignment[] = [];
 
+//loads assignments from file
 async function loadAssignments() {
     try {
         let data = await Deno.readTextFile("assignments.json");
@@ -24,6 +26,7 @@ async function loadAssignments() {
     }
 }
 
+//saves assignments to file
 async function saveAssignments() {
     try {
         await Deno.writeTextFile("assignments.json", JSON.stringify(assignments, null, 2));
@@ -33,22 +36,26 @@ async function saveAssignments() {
     }
 }
 
+//gets assignment info from user
 function addAssignment() {
     try {
         let name = prompt("Assignment name:");
         let course = prompt("Course name:");
         let dueDate = prompt("Due date (YYYY-MM-DD):");
 
+        //checks if anything was left empty
         if (!name || !course || !dueDate) {
             throw new Error("All fields must be filled out.");
         }
 
+        //checks if date is valid
         let date = new Date(dueDate);
 
         if (isNaN(date.getTime())) {
             throw new Error("Invalid date.");
         }
 
+        //adds assignment to array
         assignments.push({
             name: name,
             course: course,
@@ -58,18 +65,21 @@ function addAssignment() {
 
         console.log("Assignment added.");
     } catch (error) {
+        //shows error message
         if (error instanceof Error) {
             console.log(error.message);
         }
     }
 }
 
+//shows all assignments
 function viewAssignments() {
     if (assignments.length === 0) {
         console.log("No assignments found.");
         return;
     }
 
+    //goes through each assignment
     for (let i = 0; i < assignments.length; i++) {
         let assignment = assignments[i];
         let status = assignment.completed ? "Completed" : "Not Completed";
@@ -78,6 +88,7 @@ function viewAssignments() {
     }
 }
 
+//marks an assignment as done
 function completeAssignment() {
     viewAssignments();
 
@@ -87,6 +98,7 @@ function completeAssignment() {
 
     let choice = Number(prompt("Enter assignment number:"));
 
+    //checks if number is valid
     if (!Number.isInteger(choice) || choice < 1 || choice > assignments.length) {
         console.log("Invalid assignment number.");
         return;
@@ -96,6 +108,7 @@ function completeAssignment() {
     console.log("Assignment completed.");
 }
 
+//checks for overdue assignments
 function checkOverdue() {
     let today = new Date();
     let found = false;
@@ -114,10 +127,12 @@ function checkOverdue() {
     }
 }
 
+//loads assignments when program starts
 await loadAssignments();
 
 let running = true;
 
+//main menu
 while (running) {
     console.log("\nCollege Assignment Tracker");
     console.log("1. Add Assignment");
